@@ -1,13 +1,9 @@
 from quart import Quart, request, jsonify
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 
 app = Quart(__name__)
-
-# 启动 Chrome 浏览器
-service = Service('/Users/xx/xx/xx/chromedriver-mac-x64/chromedriver')
-driver = webdriver.Chrome(service=service)
-driver.get('https://xx.xx.xx.xx:port/xx/xx.jsp')  # 替换为包含js的实际地址
 
 def encrypt_password(driver, password):
     """调用页面的 encryptPwd 函数并返回结果"""
@@ -61,4 +57,15 @@ async def cleanup():
         print(f"Error closing browser: {e}")
 
 if __name__ == '__main__':
+
+    # 配置无头浏览器选项
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')  # 启用无头模式
+    chrome_options.add_argument('--no-sandbox')  # 针对某些环境的配置
+    chrome_options.add_argument('--disable-dev-shm-usage')  # 解决共享内存不足
+
+    # 启动 Chrome 浏览器
+    service = Service('/Users/xx/xx/xx/chromedriver-mac-x64/chromedriver')
+    driver = webdriver.Chrome(service=service,options=chrome_options)
+    driver.get('https://xx.xx.xx.xx:port/xx/xx.jsp')  # 替换为包含js的实际地址
     app.run(debug=True, port=7001)
